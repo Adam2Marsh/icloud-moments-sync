@@ -4,9 +4,12 @@ import datetime
 import json
 import sys
 from pyicloud import PyiCloudService
+from pathlib import Path
 
 outFolder = ".out/"
 iCloudFileName = "iCloudPhotoFileNames"
+
+momentsFileName = "momentsPhotoFileNames"
 
 def logIntoiCloud():
     global iCloudApi
@@ -52,6 +55,18 @@ def checkForFile(filename):
     except IOError:
         return True
 
+def getFilenamesFromMoments():
+    momentsFilePath = sys.argv[3]
+    momentsFileNames = []
+
+    for path in Path(momentsFilePath).iterdir():
+        if path.is_dir():
+            for file in Path(path).iterdir():
+                print ("Adding " + file.parts[-1] + " to list")
+                momentsFileNames.append(file.parts[-1])
+    
+    with open(outFolder + momentsFileName + ".json", 'w', encoding='utf-8') as f:
+        json.dump(momentsFileNames, f, ensure_ascii=False, indent=4)
 
 print("Starting sync process")
 
@@ -62,4 +77,10 @@ if checkForFile(outFolder + iCloudFileName):
     print("Downloading Filenames from iCloud")
     getFilenamesFromiCloud()
 else:
-    print("Doing Nothing")
+    print("iCloud Filenames Fetched")
+
+if checkForFile(outFolder + momentsFileName):
+    print("Moments File list doesn't exist so getting")
+    getFilenamesFromMoments()
+else:
+    print("Moments Filenames Fetched")
