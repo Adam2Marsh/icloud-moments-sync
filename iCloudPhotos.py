@@ -5,22 +5,15 @@ import datetime
 import json
 import sys
 
+from Utilities import Utilities
+
 class ListOfiCloudPhotos:
 
     def __init__(self, fileLocation):
         self.fileLocation = fileLocation
-        self.iCloudPhotos = []
-
-        if self.checkForFile(self.fileLocation):
-            print("iCloud File list doesn't exist so getting")
-            self.__logIntoiCloud()
-            print("Downloading Filenames from iCloud")
-            self.getPhotoNames()
-        
-        print("Loading Photos into Class Array")
-        self.__loadFilesIntoList()
-        print(self.iCloudPhotos)
-        
+        self.objectPhotos = []
+        self.photos = []
+        self.utilities = Utilities()
 
     def __logIntoiCloud(self):
         global iCloudApi
@@ -49,7 +42,7 @@ class ListOfiCloudPhotos:
                 print("Failed to verify verification code")
                 sys.exit(1)
 
-    def getPhotoNames(self):
+    def __getPhotoNames(self):
         listOfPhotos = []
 
         for photo in iCloudApi.photos.all:
@@ -58,20 +51,23 @@ class ListOfiCloudPhotos:
 
         with open(self.fileLocation, 'w', encoding='utf-8') as f:
             json.dump(listOfPhotos, f, ensure_ascii=False, indent=4)
-
-    def checkForFile(self, filename):
-        try:
-            with open(filename) as f:
-                return False
-        except IOError:
-            return True
     
     def __loadFilesIntoList(self):
         with open(self.fileLocation) as json_file:            
             for photo in json.load(json_file):
-                self.iCloudPhotos.append(iCloudPhoto(photo))
+                self.photos.append(photo)
+                self.objectPhotos.append(iCloudPhoto(photo))
         
-
+    def fetchFileNames(self):
+        if self.utilities.checkForFile(self.fileLocation):
+            print("iCloud File list doesn't exist so getting")
+            self.__logIntoiCloud()
+            print("Downloading Filenames from iCloud")
+            self.__getPhotoNames()
+        
+        print("Loading Photos into Class Array")
+        self.__loadFilesIntoList()
+        
 class iCloudPhoto:
     
     def __init__(self, name):

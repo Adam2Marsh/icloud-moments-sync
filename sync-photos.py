@@ -1,71 +1,45 @@
-import ListOfiCloudPhotos
+import iCloudPhotos
+import MomentPhotos
+import json
+
+from hurry.filesize import size
 
 outFolder = ".out/"
-momentsFileName = "momentsPhotoFileNames"
 resultsFileName = "results"
 
 excludeVideoFileExtensions = ['.MOV', '.mp4', '.MP4', '.AVI', '.mov', '.m4v']
 
-localConfigDict = {}
-
-
-# def getFilenamesFromMoments():
-#     momentsFilePath = sys.argv[3]
-#     momentsFileNames = []
-
-#     for path in Path(momentsFilePath).iterdir():
-#         if path.is_dir():
-#             for file in Path(path).iterdir():
-#                 print ("Adding " + file.parts[-1] + " to list with path of " + str(file))
-#                 momentsFileNames.append({
-#                     "name": file.name,
-#                     "path": str(file)
-#                 })
+def findPhotosWhichCouldBeRemoved(moments, icloud):
+    picturesToDelete = []
+    spaceSaved = 0
+    for photo in moments:
+        if not skipMovieFiles(excludeVideoFileExtensions, photo.returnName()):
+            if photo.returnName() not in icloud:
+                # print (photo.returnName() + ' does not exist in iCloud; so could be one to delete')
+                picturesToDelete.append(photo.returnName())
+                spaceSaved+=photo.returnFileSizeInBytes()
     
-#     with open(outFolder + momentsFileName + ".json", 'w', encoding='utf-8') as f:
-#         json.dump(momentsFileNames, f, ensure_ascii=False, indent=4)
+    with open(outFolder + "delete.json", 'w', encoding='utf-8') as f:
+        json.dump(picturesToDelete, f, ensure_ascii=False, indent=4)
+    print('I think there is ' + str(len(picturesToDelete)) + ' to delete which could save ' + size(spaceSaved) + ' in bytes')
 
-# def loadFileIntoConfigDict(fileName):
-#     with open(outFolder + fileName + '.json') as json_file:
-#         fileContents = json.load(json_file)
-#         localConfigDict[fileName] = fileContents
-
-# def findPhotosWhichCouldBeRemoved(moments, icloud):
-#     picturesToDelete = []
-#     spaceSaved = 0
-#     for photo in localConfigDict[moments]:
-#         photoObject = MomentPhoto(photo["path"], photo["name"])
-#         if not skipMovieFiles(excludeVideoFileExtensions, photoObject.name):
-#             if photoObject.name not in localConfigDict[two]:
-#                 print (photoObject.name + ' not exists ' + two + '; so could be one to delete')
-#                 picturesToDelete.append(photoObject.name)
+def skipMovieFiles(fileExtensions, name):
+    for ext in fileExtensions:
+        if ext in name:
+            return True
     
-#     with open(outFolder + "delete.json", 'w', encoding='utf-8') as f:
-#         json.dump(picturesToDelete, f, ensure_ascii=False, indent=4)
-#     print('I think there is ' + str(len(picturesToDelete)) + ' to delete')
+    return False
 
-# def skipMovieFiles(fileExtensions, name):
-#     for ext in fileExtensions:
-#         if ext in name:
-#             return True
-    
-#     return False
+listOfiCloudPhotos = iCloudPhotos.ListOfiCloudPhotos(outFolder + 'iCloudLocal.json')
+listOfiCloudPhotos.fetchFileNames()
+print("Fetched " + str(len(listOfiCloudPhotos.photos)) + " icloud photos")
 
-listOfiCloudPhotos = ListOfiCloudPhotos.ListOfiCloudPhotos(outFolder + 'iCloudLocal.json')
+listOfMomentPhotos = MomentPhotos.ListOfMomentPhotos(outFolder + 'MomentLocal.json')
+listOfMomentPhotos.fetchFileNames()
+print("Fetched " + str(len(listOfMomentPhotos.photos)) + " moment photos")
 
-# print("Starting sync process")
-# if checkForFile(outFolder + iCloudFileName):
 
-# else:
-#     print("iCloud Filenames Already Fetched")
+# print(listOfiCloudPhotos.photos)
 
-# if checkForFile(outFolder + momentsFileName):
-#     print("Moments File list doesn't exist so getting")
-#     getFilenamesFromMoments()
-# else:
-#     print("Moments Filenames Already Fetched")
-
-# loadFileIntoConfigDict(iCloudFileName)
-# loadFileIntoConfigDict(momentsFileName)
-
-# findPhotosWhichCouldBeRemoved(iCloudFileName, momentsFileName)
+print("Performing dry-run sync of photos")
+findPhotosWhichCouldBeRemoved(listOfMomentPhotos.photos, listOfiCloudPhotos.photos)

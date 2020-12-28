@@ -1,1 +1,2 @@
 pyicloud==0.9.7
+hurry.filesize==0.9
