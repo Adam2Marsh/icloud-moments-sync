@@ -55,7 +55,7 @@ class ListOfiCloudPhotos:
     def __loadFilesIntoList(self):
         with open(self.fileLocation) as json_file:            
             for photo in json.load(json_file):
-                self.photos.append(photo)
+                self.photos.append(iCloudPhoto(photo).returnName())
                 self.objectPhotos.append(iCloudPhoto(photo))
         
     def fetchFileNames(self):
@@ -70,8 +70,11 @@ class ListOfiCloudPhotos:
         
 class iCloudPhoto:
     
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, filename):
+        self.filename = filename
+
+    def returnFilename(self):
+        return self.filename
 
     def returnName(self):
-        return self.name
+        return self.filename.split(".")[0]

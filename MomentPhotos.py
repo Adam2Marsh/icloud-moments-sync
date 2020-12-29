@@ -44,13 +44,16 @@ class ListOfMomentPhotos:
 
 class MomentPhoto:
     
-    def __init__(self, path, name):
+    def __init__(self, path, filename):
         self.path = path
-        self.name = name
+        self.filename = filename
 
     def returnName(self):
-        return self.name
+        return self.filename.split(".")[0]
     
+    def returnFileName(self):
+        return self.filename
+
     def returnPath(self):
         return self.path
 
