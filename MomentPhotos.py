@@ -19,7 +19,6 @@ class ListOfMomentPhotos:
             if path.is_dir():
                 for file in Path(path).iterdir():
                     momentsFileNames.append({
-                        "name": file.name,
                         "path": str(file)
                     })
         
@@ -30,7 +29,7 @@ class ListOfMomentPhotos:
         with open(self.fileLocation) as json_file:            
             for photo in json.load(json_file):
                 self.photos.append(
-                    MomentPhoto(photo["path"], photo["name"])
+                    MomentPhoto(photo["path"])
                 )
 
     def fetchFileNames(self):
@@ -44,18 +43,23 @@ class ListOfMomentPhotos:
 
 class MomentPhoto:
     
-    def __init__(self, path, filename):
+    def __init__(self, path):
         self.path = path
-        self.filename = filename
+
+    def returnNameWithDate(self):
+        return self.returnPathDate() + "/" + self.returnName()
 
     def returnName(self):
-        return self.filename.split(".")[0]
+        return self.returnFileName().split(".")[0]
     
     def returnFileName(self):
-        return self.filename
+        return self.path.split("/")[-1]
 
     def returnPath(self):
         return self.path
+
+    def returnPathDate(self):
+        return self.path.split("/")[-2]
 
     def returnFileSizeInBytes(self):
         return Path(self.path).stat().st_size

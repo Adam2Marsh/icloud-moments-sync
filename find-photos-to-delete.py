@@ -12,12 +12,10 @@ excludeVideoFileExtensions = ['.MOV', '.mp4', '.MP4', '.AVI', '.mov', '.m4v']
 def findPhotosWhichCouldBeRemoved(moments, icloud):
     picturesToDelete = []
     spaceSaved = 0
-    for photo in moments:
-        # if not skipMovieFiles(excludeVideoFileExtensions, photo.returnName()):
-        if photo.returnName() not in icloud:
-            # print (photo.returnName() + ' does not exist in iCloud; so could be one to delete')
-            picturesToDelete.append(photo.returnName())
-            spaceSaved+=photo.returnFileSizeInBytes()
+    for momentPhoto in moments:
+        if momentPhoto.returnNameWithDate() not in icloud:
+            picturesToDelete.append(momentPhoto.returnPath())
+            spaceSaved+=momentPhoto.returnFileSizeInBytes()
     
     with open(outFolder + resultsFileName + ".json", 'w', encoding='utf-8') as f:
         json.dump(picturesToDelete, f, ensure_ascii=False, indent=4)

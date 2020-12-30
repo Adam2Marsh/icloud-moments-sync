@@ -46,8 +46,12 @@ class ListOfiCloudPhotos:
         listOfPhotos = []
 
         for photo in iCloudApi.photos.all:
-            print ("Adding " + photo.filename + " to list")
-            listOfPhotos.append(photo.filename)
+            # print ("Adding " + photo.filename + " to list")
+            listOfPhotos.append({
+                "name": photo.filename,
+                "added_date": photo.added_date.isoformat(),
+                "asset_date": photo.asset_date.isoformat()
+            })
 
         with open(self.fileLocation, 'w', encoding='utf-8') as f:
             json.dump(listOfPhotos, f, ensure_ascii=False, indent=4)
@@ -55,8 +59,9 @@ class ListOfiCloudPhotos:
     def __loadFilesIntoList(self):
         with open(self.fileLocation) as json_file:            
             for photo in json.load(json_file):
-                self.photos.append(iCloudPhoto(photo).returnName())
-                self.objectPhotos.append(iCloudPhoto(photo))
+                photoObject = iCloudPhoto(photo["name"], photo["asset_date"])
+                self.photos.append(photoObject.returnDate() + "/" +photoObject.returnName())
+                # self.photos.append(photoObject)
         
     def fetchFileNames(self):
         if self.utilities.checkForFile(self.fileLocation):
@@ -70,11 +75,15 @@ class ListOfiCloudPhotos:
         
 class iCloudPhoto:
     
-    def __init__(self, filename):
+    def __init__(self, filename, date):
         self.filename = filename
+        self.date = date
 
     def returnFilename(self):
         return self.filename
 
     def returnName(self):
         return self.filename.split(".")[0]
+
+    def returnDate(self):
+        return self.date.split("T")[0]
