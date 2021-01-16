@@ -4,13 +4,17 @@ import click
 import datetime
 import json
 import sys
+import argparse
 
 from Utilities import Utilities
 
 class ListOfiCloudPhotos:
 
-    def __init__(self, fileLocation):
+    def __init__(self, fileLocation, icloud_email, icloud_password, refresh):
         self.fileLocation = fileLocation
+        self.icloud_email = icloud_email
+        self.icloud_password = icloud_password
+        self.refresh = refresh
         self.objectPhotos = []
         self.photos = []
         self.utilities = Utilities()
@@ -19,7 +23,7 @@ class ListOfiCloudPhotos:
         global iCloudApi
 
         print("Logging into iCloud")
-        iCloudApi = PyiCloudService(sys.argv[1], sys.argv[2])
+        iCloudApi = PyiCloudService(self.icloud_email, self.icloud_password)
 
         if iCloudApi.requires_2sa:
             print("Two-factor authentication required. Your trusted devices are:")
@@ -60,11 +64,11 @@ class ListOfiCloudPhotos:
         with open(self.fileLocation) as json_file:            
             for photo in json.load(json_file):
                 photoObject = iCloudPhoto(photo["name"], photo["asset_date"])
-                self.photos.append(photoObject.returnDate() + "/" +photoObject.returnName())
+                self.photos.append(photoObject.returnDate() + "/" + photoObject.returnName())
                 # self.photos.append(photoObject)
         
     def fetchFileNames(self):
-        if self.utilities.checkForFile(self.fileLocation):
+        if self.utilities.checkForFile(self.fileLocation) or self.refresh:
             print("iCloud File list doesn't exist so getting")
             self.__logIntoiCloud()
             print("Downloading Filenames from iCloud")

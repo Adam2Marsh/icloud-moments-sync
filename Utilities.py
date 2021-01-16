@@ -6,3 +6,4 @@ class Utilities:
                 return False
         except IOError:
             return True
+                

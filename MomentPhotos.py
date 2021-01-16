@@ -6,8 +6,10 @@ from Utilities import Utilities
 
 class ListOfMomentPhotos:
 
-    def __init__(self, filename):
+    def __init__(self, filename, local_directory, refresh):
         self.fileLocation = filename
+        self.local_directory = local_directory
+        self.refresh = refresh
         self.photos = []
         self.utilities = Utilities()
 
@@ -33,7 +35,7 @@ class ListOfMomentPhotos:
                 )
 
     def fetchFileNames(self):
-        if self.utilities.checkForFile(self.fileLocation):
+        if self.utilities.checkForFile(self.fileLocation) or self.refresh:
             print("Fetching list of filenames and saving locally")
             self.__getFilenames()
         
