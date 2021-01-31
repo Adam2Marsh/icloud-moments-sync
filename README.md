@@ -4,8 +4,47 @@ I developed these 2 scripts to remove pictures from Synology moments which had b
 * delete-photos.py - Doesn't actually delete but move the files the previous script found into a directory you specify. Safer than just deleting, gives you a second chance to check them over and confirm the script didn't pick photos which should of been kept.
 
 ## How to Run?
-    python3 find-photos-to-delete.py "USERNAME" "PASSWORD" "Local Path to Moments Directory"
-    python3 delete-photos.py "Local Path to a folder to act as a recycle bin"
+python3 find-photos-to-delete.py "USERNAME" "PASSWORD" "Local Path to Moments Directory"
+```
+python3 find-photos-to-delete.py example@icloud.com password /var/services/homes/username/Drive/Moments/Mobile/phoneName
+```
+
+python3 delete-photos.py "Local Path to a folder to act as a recycle bin"
+```
+python3 delete-photos.py ./recycle_bin
+```
+
+
+## Extra Information on each Scripts
+```
+python3 find-photos-to-delete.py  -h
+usage: find-photos-to-delete.py [-h] [-ri] [-rl] icloud_email icloud_password local_directory
+
+Compares your icloud photos with a local copy like moments
+
+positional arguments:
+  icloud_email          Email address used when logging into iCloud
+  icloud_password       Password used when logging into iCloud
+  local_directory       Directory which contains local copy of pictures
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -ri, --refresh_icloud
+                        Force a refresh of icloud photos
+  -rl, --refresh_local  Force a refresh of local photos
+```
+```
+python3 delete-photos.py -h
+usage: delete-photos.py [-h] recycle_bin
+
+Removes files from moments but moving files found in find-photos-to-delete.py
+
+positional arguments:
+  recycle_bin  Path to directory to move files to
+
+optional arguments:
+  -h, --help   show this help message and exit
+```
 
 ## How to run  the tests?
     python3 tests.py
