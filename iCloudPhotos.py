@@ -68,7 +68,7 @@ class ListOfiCloudPhotos:
                 # self.photos.append(photoObject)
         
     def fetchFileNames(self):
-        if self.utilities.checkForFile(self.fileLocation) or self.refresh:
+        if self.utilities.checkForFile(self.fileLocation) == False or self.refresh:
             print("iCloud File list doesn't exist so getting")
             self.__logIntoiCloud()
             print("Downloading Filenames from iCloud")

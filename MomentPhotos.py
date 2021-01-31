@@ -35,7 +35,7 @@ class ListOfMomentPhotos:
                 )
 
     def fetchFileNames(self):
-        if self.utilities.checkForFile(self.fileLocation) or self.refresh:
+        if self.utilities.checkForFile(self.fileLocation) == False or self.refresh:
             print("Fetching list of filenames and saving locally")
             self.__getFilenames()
         

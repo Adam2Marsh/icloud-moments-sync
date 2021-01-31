@@ -3,7 +3,7 @@ class Utilities:
     def checkForFile(self, filename):
         try:
             with open(filename) as f:
-                return False
+                return True
         except IOError:
-            return True
+            return False
                 
