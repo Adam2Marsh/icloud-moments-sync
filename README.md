@@ -4,11 +4,28 @@ I developed these 2 scripts to remove pictures from Synology moments which had b
 * delete-photos.py - Doesn't actually delete but move the files the previous script found into a directory you specify. Safer than just deleting, gives you a second chance to check them over and confirm the script didn't pick photos which should of been kept.
 
 ## How to Run?
+1. First you need to grab a release version and download the files:
+```
+wget https://github.com/Adam2Marsh/icloud-moments-sync/archive/1.0.0.tar.gz
+```
+
+2. Then you can untar the scripts:
+```
+tar -xvf 1.0.0.tar.gz 
+```
+
+3. Now enter the directory with the scripts:
+```
+cd icloud-moments-sync-1.0.0
+```
+
+4. Now you can run the first script:
 python3 find-photos-to-delete.py "USERNAME" "PASSWORD" "Local Path to Moments Directory"
 ```
 python3 find-photos-to-delete.py example@icloud.com password /var/services/homes/username/Drive/Moments/Mobile/phoneName
 ```
 
+5. Once happy you can then run the second script:
 python3 delete-photos.py "Local Path to a folder to act as a recycle bin"
 ```
 python3 delete-photos.py ./recycle_bin
